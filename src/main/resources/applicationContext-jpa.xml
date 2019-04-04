@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/data/jpa
+                        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <!-- 扫描DAO层接口 -->
+    <jpa:repositories base-package="com.wql.dao"/>
+
+    <!-- jpa适配器   entityManager需要-->
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <!-- 使用数据库 -->
+        <property name="database" value="MYSQL"/>
+        <!-- 是否控制台打印sql -->
+        <property name="showSql" value="true"/>
+        <!-- 根据实体类是否生成表   false不需要 true需要 -->
+        <property name="generateDdl" value="false"/>
+        <!-- 数据库方言 -->
+    <!--  <property name="databasePlatform" value=""/> -->
+</bean>
+
+<!-- jpa 实体管理工厂 -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <!-- 数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 扫描实体包 -->
+        <property name="packagesToScan" value="com.wql.model"/>
+        <!-- jpa适配器 -->
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+        <!-- 一些属性   -->
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.jdbc.batch.size">25</prop>
+            </props>
+        </property>
+
+    </bean>
+
+    <!-- jpa事务 -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+
+
+
+</beans>
